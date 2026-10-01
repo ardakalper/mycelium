@@ -112,8 +112,9 @@ test('settings: copy and load a save, sound, start over', async ({ page, context
   await game(page, () => { window.__myc.state.levels.enzymes = 6; window.__myc.state.forest = 2; });
   await page.click('[data-tab="colony"]');
   await page.click('#set-export');
+  // the save is compressed asynchronously; wait for it to land
+  await expect(page.locator('#set-export')).toHaveAttribute('data-save', /^.{100,}$/s);
   const text = await page.locator('#set-export').getAttribute('data-save');
-  expect(text.length).toBeGreaterThan(100);
   await page.click('#set-sound');
   await expect(page.locator('#set-sound')).toHaveAttribute('aria-pressed', 'false');
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('mycelium:settings')).sound)).toBe(false);
