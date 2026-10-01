@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mycelium</title>
+  <meta name="description" content="A free idle game about growing a fungal network underground: spread, decompose, trade with trees, and spore into a new forest.">
+  <meta name="theme-color" content="#06080f">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="preload" href="sim.wasm" as="fetch" type="application/wasm" crossorigin>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <canvas id="world" aria-label="A cross-section of the forest floor, with your fungal network growing through the soil"></canvas>
+
+  <header class="hud">
+    <div class="brand">Mycelium</div>
+    <div class="res nut" id="res-nut"><span class="label">Nutrients</span><b id="r-nut">0</b><small id="r-nut-rate">0/s</small></div>
+    <div class="res sug" id="res-sug"><span class="label">Sugar</span><b id="r-sug">0</b><small id="r-sug-rate">0/s</small></div>
+    <div class="res spo" id="res-spo" hidden><span class="label">Spores</span><b id="r-spo">0</b><small>to spend</small></div>
+  </header>
+
+  <aside class="panel">
+    <nav class="tabs">
+      <button data-tab="grow" class="on">Grow</button>
+      <button data-tab="strains" hidden>Strains</button>
+      <button data-tab="colony">Colony</button>
+    </nav>
+    <div class="buy-amount" role="group" aria-label="How many to buy">
+      <button data-amount="1" class="on">×1</button><button data-amount="10">×10</button><button data-amount="max">Max</button>
+    </div>
+    <section class="tab cards" id="tab-grow"></section>
+    <section class="tab cards" id="tab-strains" hidden></section>
+    <section class="tab" id="tab-colony" hidden>
+      <dl class="stats">
+        <div><dt>Hyphae</dt><dd id="s-length">0 m</dd></div>
+        <div><dt>Growing tips</dt><dd id="s-tips">0</dd></div>
+        <div><dt>Fusions</dt><dd id="s-fusions">0</dd></div>
+        <div><dt>Soil digested</dt><dd id="s-eaten">0%</dd></div>
+        <div><dt>Trees linked</dt><dd id="s-trees">0</dd></div>
+        <div><dt>Forest</dt><dd id="s-forest">1</dd></div>
+        <div><dt>Income bonus</dt><dd id="s-mult">×1</dd></div>
+        <div><dt>All-time nutrients</dt><dd id="s-lifetime">0</dd></div>
+      </dl>
+      <h3>How it works</h3>
+      <ul class="how">
+        <li>Hyphal tips grow through the soil and digest what they touch. Growing costs food, so a colony in poor soil slows down.</li>
+        <li>Food travels home through the network, and some is lost on the way: the farther, the less arrives. Fused hyphae make shortcuts.</li>
+        <li>Reach a tree's roots and it trades sugar for your nutrients.</li>
+        <li>Lay a lure to steer the tips. Click passing earthworms.</li>
+        <li>When the soil is spent, fruit: the colony releases spores into a new forest.</li>
+      </ul>
+      <h3>Settings</h3>
+      <div class="settings">
+        <button class="pill" id="set-sound" aria-pressed="true">Sound</button>
+        <button class="pill" id="set-export">Copy save</button>
+        <button class="pill" id="set-import">Load save</button>
+        <button class="pill danger" id="set-reset">Start over</button>
+      </div>
+    </section>
+  </aside>
+
+  <footer class="dock">
+    <div class="biome"><b id="biome-name"></b><small id="forest-n"></small></div>
+    <button class="fruit" id="btn-fruit" disabled><span>Fruit</span><small id="fruit-info"></small><i id="fruit-bar"></i></button>
+    <p class="hint" id="hint"></p>
+  </footer>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <p class="fatal" id="fatal" hidden></p>
+
+  <dialog id="dlg-intro" class="dlg">
+    <h1>Mycelium</h1>
+    <p class="lede">A spore settles into the leaf litter of an old beech wood, and begins to grow.</p>
+    <p>Spread through the soil, digest what has fallen, and trade with the trees above. When the ground is spent, fruit, and send your spores to a new forest.</p>
+    <button class="btn" id="intro-go">Grow</button>
+  </dialog>
+  <dialog id="dlg-away" class="dlg">
+    <h2>While you were away</h2>
+    <p class="muted">for <span id="away-time"></span></p>
+    <p id="away-body"></p>
+    <button class="btn" data-close>Back to the soil</button>
+  </dialog>
+  <dialog id="dlg-fruit" class="dlg">
+    <h2>Fruit?</h2>
+    <p>Mushrooms will push up through the litter and release <b class="spo" id="fruit-gain"></b>. The spores land in the <b id="fruit-next"></b>, and the colony starts again from a single spore.</p>
+    <p class="muted">You keep spores, strains and their bonuses. Nutrients, sugar and upgrades start over.</p>
+    <div class="row"><button class="btn" id="fruit-yes">Fruit</button><button class="btn ghost" data-close>Not yet</button></div>
+  </dialog>
+  <dialog id="dlg-import" class="dlg">
+    <h2>Load a save</h2>
+    <textarea id="import-text" rows="5" spellcheck="false" placeholder="Paste a save copied from Mycelium"></textarea>
+    <p class="muted" id="import-msg"></p>
+    <div class="row"><button class="btn" id="import-go">Load</button><button class="btn ghost" data-close>Cancel</button></div>
+  </dialog>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

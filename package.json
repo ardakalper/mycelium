@@ -1,0 +1,27 @@
+{
+  "name": "mycelium",
+  "version": "1.0.0",
+  "description": "A free idle game about growing a fungal network underground: spread, decompose, and spore into a new forest.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "start": "node tools/build.mjs && node tools/serve.mjs 4182",
+    "typecheck": "tsc",
+    "test": "npm run test:rust && npm run build && npm run test:unit && npm run test:e2e",
+    "test:rust": "cargo test --release --manifest-path sim/Cargo.toml",
+    "test:unit": "node --experimental-strip-types --no-warnings --test tests/*.test.ts",
+    "test:e2e": "playwright test",
+    "balance": "node --experimental-strip-types --no-warnings tools/balance.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.20.4",
+    "esbuild": "^0.28.2",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22.6"
+  },
+  "license": "MIT"
+}
